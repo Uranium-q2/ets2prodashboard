@@ -1,0 +1,11 @@
+services:
+  ets2-dashboard:
+    build: .
+    container_name: ets2-dashboard
+    ports:
+      - "5050:5000"
+    environment:
+      - ETS2_API_URL=http://host.docker.internal:25555/api/ets2/telemetry
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
