@@ -88,7 +88,7 @@
     .tft-display-cluster {
         position: relative;
         width: 250px;
-        min-height: 360px;
+        min-height: 380px;
         background: var(--panel-bg);
         border: 3px solid var(--panel-border);
         border-radius: 14px;
@@ -129,28 +129,53 @@
     .job-panel .val { color: #fff; font-weight: 600; }
     .job-title { color: var(--accent); font-size: 10px; letter-spacing: 1px; margin-bottom: 2px; }
 
-    /* ---- Blinkers ---- */
-    .blinker-container {
-        position: absolute; top: 2.5vh; width: 100%;
-        display: flex; justify-content: space-between; padding: 0 22vw; z-index: 20;
+    /* ---- Blinkers (sit right above the central screen, like a real cluster) ---- */
+    .blinker-row {
+        display: flex; align-items: center; justify-content: center;
+        gap: 48px; width: 100%; margin-top: -4px;
     }
-    .blinker { font-size: 40px; color: #1a1a1a; transition: color .05s, text-shadow .05s; }
-    .blinker.active { color: #00ff33; text-shadow: 0 0 20px #00ff33, 0 0 40px #00ff33; }
+    .blinker {
+        font-size: 22px; color: #1a1a1a; transition: color .05s, text-shadow .05s;
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    .blinker.active { color: #00ff33; text-shadow: 0 0 14px #00ff33, 0 0 28px #00ff33; }
 
     /* ---- Big round gauges ---- */
     .gauge {
         position: relative; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
         background: radial-gradient(circle at 50% 45%, #1b1f25 0%, #07080a 78%);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.95), inset 0 0 25px rgba(0,0,0,0.8);
-        border: 5px solid #23272e;
+        box-shadow:
+            0 20px 50px rgba(0,0,0,0.95),
+            inset 0 0 0 7px #0c0d0f,
+            inset 0 0 25px rgba(0,0,0,0.85);
+        border: 5px solid #2e343d;
+    }
+    /* chrome bezel ring */
+    .gauge::before {
+        content: "";
+        position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+        border-radius: 50%;
+        background: conic-gradient(from 220deg,
+            #8a95a3 0deg, #e8edf2 35deg, #5c6470 90deg, #aab3c0 150deg,
+            #3b4049 210deg, #c3cad3 270deg, #6b7380 330deg, #8a95a3 360deg);
+        z-index: -1;
+        filter: brightness(0.85);
+    }
+    /* glass glare */
+    .gauge::after {
+        content: "";
+        position: absolute; top: 4%; left: 10%; width: 55%; height: 40%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.02) 55%, transparent 70%);
+        pointer-events: none; z-index: 3;
     }
     .gauge-large { width: min(36vh, 400px); height: min(36vh, 400px); }
     .gauge-small { width: min(16vh, 170px); height: min(16vh, 170px); }
 
     .gauge svg.face { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
-    .tick-label { fill: #aab3c0; font-size: 13px; font-family: 'Segoe UI', sans-serif; text-anchor: middle; }
-    .gauge-caption { position: absolute; top: 28%; font-size: 12px; letter-spacing: 2px; color: #566072; }
+    .tick-label { fill: #c7cedb; font-size: 14px; font-weight: 600; font-family: 'Segoe UI', sans-serif; text-anchor: middle; }
+    .gauge-caption { position: absolute; top: 27%; font-size: 12px; letter-spacing: 3px; color: #7986a0; font-weight: 600; }
     .gauge-unit { position: absolute; bottom: 28%; font-size: 11px; color: #45505f; }
 
     .needle-wrapper {
@@ -160,17 +185,24 @@
         z-index: 6;
     }
     .needle {
-        position: absolute; bottom: 50%; left: calc(50% - 1.5px); width: 3px;
-        background: linear-gradient(to top, #b30000 0%, #ff1a1a 100%);
-        border-radius: 2px 2px 0 0; box-shadow: 0 0 8px rgba(255, 26, 26, 0.9);
+        position: absolute; bottom: 50%; left: calc(50% - 2px); width: 4px;
+        background: linear-gradient(to top, #8a0000 0%, #ff3030 55%, #ff8a8a 100%);
+        border-radius: 3px 3px 0 0; box-shadow: 0 0 10px rgba(255, 40, 40, 0.95);
+    }
+    .needle::after {
+        content: "";
+        position: absolute; bottom: -9px; left: -5px; width: 14px; height: 14px;
+        background: linear-gradient(to top, #8a0000, #ff3030);
+        border-radius: 50%;
     }
     .needle-large { height: 36%; }
     .needle-small { height: 32%; }
 
     .pivot {
-        position: absolute; width: 18px; height: 18px;
-        background: radial-gradient(circle, #ffffff 0%, #444444 100%);
-        border-radius: 50%; z-index: 7; box-shadow: 0 3px 6px rgba(0,0,0,0.9);
+        position: absolute; width: 20px; height: 20px;
+        background: radial-gradient(circle at 35% 30%, #ffffff 0%, #9aa3ad 35%, #2b2f36 100%);
+        border-radius: 50%; z-index: 7;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.9), 0 0 0 3px #15171b;
     }
 
     .lcd-display {
@@ -191,11 +223,6 @@
 </div>
 
 <div class="cluster-housing">
-    <div class="blinker-container">
-        <div id="blinker-l" class="blinker">&#9668;</div>
-        <div id="blinker-r" class="blinker">&#9658;</div>
-    </div>
-
     <!-- LEFT COLUMN: SPEED + FUEL -->
     <div class="gauge-column">
         <div class="gauge gauge-large" id="gauge-speed">
@@ -218,6 +245,10 @@
 
     <!-- CENTRAL TFT COMPUTER DISPLAY -->
     <div class="tft-display-cluster">
+        <div class="blinker-row">
+            <div id="blinker-l" class="blinker">&#9668;</div>
+            <div id="blinker-r" class="blinker">&#9658;</div>
+        </div>
         <div class="tft-top">ON-BOARD COMPUTER</div>
 
         <div class="tft-gear-container">
@@ -281,23 +312,48 @@
 </div>
 
 <script>
-function buildTicks(svg, ticks, startAngle, endAngle, redFrom) {
+function buildTicks(svg, ticks, startAngle, endAngle, redFrom, minorPerStep) {
     const ns = "http://www.w3.org/2000/svg";
     const cx = 200, cy = 200, r = 165;
+
+    // outer rim + inner groove for a machined-metal look
+    const rim = document.createElementNS(ns, "circle");
+    rim.setAttribute("cx", cx); rim.setAttribute("cy", cy); rim.setAttribute("r", r + 6);
+    rim.setAttribute("fill", "none"); rim.setAttribute("stroke", "#1c1f24"); rim.setAttribute("stroke-width", "2");
+    svg.appendChild(rim);
+
+    if (minorPerStep) {
+        const totalMinor = (ticks.length - 1) * minorPerStep;
+        for (let i = 0; i <= totalMinor; i++) {
+            if (i % minorPerStep === 0) continue;
+            const angle = startAngle + (i / totalMinor) * (endAngle - startAngle);
+            const rad = angle * Math.PI / 180;
+            const x1 = cx + (r - 10) * Math.cos(rad), y1 = cy + (r - 10) * Math.sin(rad);
+            const x2 = cx + (r - 2) * Math.cos(rad), y2 = cy + (r - 2) * Math.sin(rad);
+            const line = document.createElementNS(ns, "line");
+            line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+            line.setAttribute("stroke", "#5c6472");
+            line.setAttribute("stroke-width", "1.5");
+            svg.appendChild(line);
+        }
+    }
+
     ticks.forEach((label, i) => {
         const angle = startAngle + (i / (ticks.length - 1)) * (endAngle - startAngle);
         const rad = angle * Math.PI / 180;
-        const x1 = cx + (r - 18) * Math.cos(rad), y1 = cy + (r - 18) * Math.sin(rad);
+        const x1 = cx + (r - 20) * Math.cos(rad), y1 = cy + (r - 20) * Math.sin(rad);
         const x2 = cx + (r - 2) * Math.cos(rad), y2 = cy + (r - 2) * Math.sin(rad);
         const line = document.createElementNS(ns, "line");
         line.setAttribute("x1", x1); line.setAttribute("y1", y1);
         line.setAttribute("x2", x2); line.setAttribute("y2", y2);
         const isRed = redFrom !== undefined && i >= redFrom;
-        line.setAttribute("stroke", isRed ? "#cc2222" : "#aab3c0");
-        line.setAttribute("stroke-width", "3");
+        line.setAttribute("stroke", isRed ? "#ff3333" : "#e4e8ee");
+        line.setAttribute("stroke-width", "3.5");
         svg.appendChild(line);
 
-        const tx = cx + (r - 38) * Math.cos(rad), ty = cy + (r - 38) * Math.sin(rad);
+        if (!label) return;
+        const tx = cx + (r - 40) * Math.cos(rad), ty = cy + (r - 40) * Math.sin(rad);
         const text = document.createElementNS(ns, "text");
         text.setAttribute("x", tx); text.setAttribute("y", ty + 4);
         text.setAttribute("class", "tick-label");
@@ -319,8 +375,8 @@ function buildTicks(svg, ticks, startAngle, endAngle, redFrom) {
     }
 }
 
-buildTicks(document.querySelector('#gauge-speed svg'), [0,20,40,60,80,100,120,140], 140, 400);
-buildTicks(document.querySelector('#gauge-rpm svg'), [0,6,12,18,24,30], 140, 400, 4);
+buildTicks(document.querySelector('#gauge-speed svg'), [0,20,40,60,80,100,120,140], 140, 400, undefined, 4);
+buildTicks(document.querySelector('#gauge-rpm svg'), [0,6,12,18,24,30], 140, 400, 4, 3);
 buildTicks(document.querySelector('#gauge-fuel svg'), ['E','','1/2','','F'], 160, 380);
 buildTicks(document.querySelector('#gauge-temp svg'), [40,60,80,100,120], 160, 380);
 
